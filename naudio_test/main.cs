@@ -1,50 +1,26 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using System.IO;
-using System.Collections.Generic;
 using NAudio.Wave;
-using System.Net.Sockets;
-using System.Net;
+using Grpc.Core;
+using MagicOnion.Server;
 
-namespace naudio_test
+namespace naudio_udp_server
 {
     class main
     {
         static int Main(string[] args)
         {
-            // device.samplingRate device.bitRate channel udpPort deviceNumber
-            int samplingRate = Int32.Parse(args[1]);
-            int bitRate = Int32.Parse(args[2]);
-            int channel = Int32.Parse(args[3]);
-            int hostPort = Int32.Parse(args[4]);
-            var deviceNumber = Int32.Parse(args[5]);
+            // device.samplingRate device.bitRate channel udpPort deviceNumber bufferMilliSec
 
-            if(channel != WaveIn.GetCapabilities(deviceNumber).Channels)
-            {
-                Console.WriteLine("チャネル数未対応です。");
-                return -1;
-            }
+            GrpcEnvironment.SetLogger(new Grpc.Core.Logging.ConsoleLogger());
+            var service = MagicOnionEngine.BuildServerServiceDefinition(isReturnExceptionStackTraceInErrorDetail: true);
 
-            var waveIn = new WaveInEvent();
-            waveIn.DeviceNumber = deviceNumber;
-            waveIn.WaveFormat = new WaveFormat(samplingRate, bitRate, channel);
-            waveIn.BufferMilliseconds = 16;
-            UdpClient udp = new UdpClient();
-            string hostip = "127.0.0.1";
-            waveIn.DataAvailable += (_, ee) =>
+            var server = new global::Grpc.Core.Server
             {
-                udp.Send(ee.Buffer, ee.BytesRecorded, hostip, hostPort);
+                Services = { service },
+                Ports = { new ServerPort("localhost", 12345, ServerCredentials.Insecure) }
             };
-            waveIn.RecordingStopped += (_, __) =>
-            {
-            };
-
-            waveIn.StartRecording();
-            Console.Write("何らかの文字を入力したら終了");
+            server.Start();
             Console.ReadLine();
-            waveIn?.StopRecording();
-            waveIn?.Dispose();
-            waveIn = null;
             return 0;
         }
     }
