@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "naudio_udp_server", "naudio_test\naudio_udp_server.csproj", "{D2667993-ACB5-4B6D-9538-D150A25EA8D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "naudio_udp_server", "naudio_udp_server\naudio_udp_server.csproj", "{D2667993-ACB5-4B6D-9538-D150A25EA8D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
